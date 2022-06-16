@@ -16,7 +16,6 @@ const CartItem = ({ item }) => {
         _id: item._id
       });
       // upon removal from cart, delete the item from IndexedDB
-      console.log("onchange delete",item);
       idbPromise('cart', 'delete', { ...item });
     } else {
       dispatch({
@@ -37,7 +36,6 @@ const CartItem = ({ item }) => {
       _id: item._id
     });
     // upon removal from cart, delete the item from IndexedDB
-    console.log("onchange delete",item);
     idbPromise('cart', 'delete', { ...item });
   };
 
