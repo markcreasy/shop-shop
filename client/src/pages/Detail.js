@@ -9,10 +9,13 @@ import {
   ADD_TO_CART,
   UPDATE_PRODUCTS,
 } from '../utils/actions';
-
 import { QUERY_PRODUCTS } from '../utils/queries';
+// custom imports
 import spinner from '../assets/spinner.gif';
 import Cart from '../components/Cart';
+// indexedDB access
+import { idbPromise } from "../utils/helpers";
+
 
 function Detail() {
   const [state, dispatch] = useStoreContext();
@@ -52,15 +55,32 @@ function Detail() {
   };
 
   useEffect(() => {
+    // already in global store
     if (products.length) {
       setCurrentProduct(products.find(product => product._id === id));
-    } else if (data) {
+    }
+    // retrieved from server
+    else if (data) {
       dispatch({
         type: UPDATE_PRODUCTS,
         products: data.products
       });
+      // indexedDB update
+      console.log("update indexedDB");
+      data.products.forEach((product) => {
+        idbPromise('products', 'put', product);
+      });
     }
-  }, [products, data, dispatch, id]);
+    // get cache from idb if no server response
+    else if (!loading) {
+      idbPromise('products', 'get').then((indexedProducts) => {
+        dispatch({
+          type: UPDATE_PRODUCTS,
+          products: indexedProducts
+        });
+      });
+    }
+  }, [products, loading, data, dispatch, id]);
 
   return (
     <>
