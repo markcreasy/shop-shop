@@ -49,7 +49,6 @@ export function idbPromise(storeName, method, object) {
         case 'get':
           const all = store.getAll();
           all.onsuccess = function() {
-            console.log(all.result);
             resolve(all.result);
           };
           break;
